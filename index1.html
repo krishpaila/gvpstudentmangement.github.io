@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-['Inter']">
+    <div class="min-h-screen">
+        <!-- Login Section -->
+        <div id="loginSection" class="p-4 max-w-md mx-auto pt-10">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Student Management System</h1>
+                <div class="space-y-4">
+                    <input type="text" id="userID" placeholder="User ID" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <select id="userType" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <option value="admin">Admin</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="student">Student</option>
+                    </select>
+                    <button onclick="login()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors">Login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="hidden p-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Admin Dashboard</h2>
+                    <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
+                </div>
+                <div class="grid gap-4 md:grid-cols-2">
+                    <!-- Add Teacher Form -->
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold mb-4">Add Teacher</h3>
+                        <div class="space-y-3">
+                            <input type="text" id="teacherName" placeholder="Teacher Name" class="w-full p-2 border rounded">
+                            <input type="number" id="teacherAge" placeholder="Age" class="w-full p-2 border rounded">
+                            <select id="teacherGender" class="w-full p-2 border rounded">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                            <input type="text" id="teacherSubject" placeholder="Subject" class="w-full p-2 border rounded">
+                            <input type="text" id="teacherID" placeholder="Teacher ID" class="w-full p-2 border rounded">
+                            <input type="password" id="teacherPassword" placeholder="Set Password" class="w-full p-2 border rounded">
+                            <button onclick="addTeacher()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Teacher</button>
+                        </div>
+                    </div>
+                    <!-- Add Student Form -->
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold mb-4">Add Student</h3>
+                        <div class="space-y-3">
+                            <input type="text" id="studentName" placeholder="Student Name" class="w-full p-2 border rounded">
+                            <input type="text" id="rollNo" placeholder="Roll Number" class="w-full p-2 border rounded">
+                            <input type="text" id="class" placeholder="Class" class="w-full p-2 border rounded">
+                            <input type="text" id="branch" placeholder="Branch" class="w-full p-2 border rounded">
+                            <input type="password" id="studentPassword" placeholder="Set Password" class="w-full p-2 border rounded">
+                            <button onclick="addStudent()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Student</button>
+                        </div>
+                    </div>
+                    <!-- Display Lists -->
+                    <div class="bg-white p-4 rounded-lg shadow-md md:col-span-2">
+                        <div class="flex space-x-4 mb-4">
+                            <button onclick="showTeacherList()" class="bg-blue-500 text-white px-4 py-2 rounded">Show Teachers</button>
+                            <button onclick="showStudentList()" class="bg-blue-500 text-white px-4 py-2 rounded">Show Students</button>
+                        </div>
+                        <div id="listContainer" class="overflow-x-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher Dashboard -->
+        <div id="teacherDashboard" class="hidden p-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Teacher Dashboard</h2>
+                    <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
+                </div>
+                <div class="grid gap-4">
+                    <!-- Mark Attendance -->
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold mb-4">Mark Attendance</h3>
+                        <div id="attendanceList" class="space-y-4"></div>
+                    </div>
+                    <!-- Update Marks -->
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold mb-4">Update Marks</h3>
+                        <div class="space-y-3">
+                            <input type="text" id="studentRoll" placeholder="Student Roll Number" class="w-full p-2 border rounded">
+                            <select id="examType" class="w-full p-2 border rounded">
+                                <option value="midterm">Mid Term</option>
+                                <option value="semester">Semester</option>
+                            </select>
+                            <input type="number" id="marks" placeholder="Marks" class="w-full p-2 border rounded">
+                            <button onclick="updateMarks()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update Marks</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="studentDashboard" class="hidden p-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Student Dashboard</h2>
+                    <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
+                </div>
+                <div class="grid gap-4">
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="text-lg font-semibold mb-4">Personal Information</h3>
+                        <div id="studentInfo" class="space-y-2"></div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="text-lg font-semibold mb-4">Attendance Report</h3>
+                        <div id="attendanceReport" class="space-y-2"></div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="text-lg font-semibold mb-4">Academic Performance</h3>
+                        <div id="performanceReport" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated database
+        let teachers = [{ id: 'admin', password: 'admin123', type: 'admin' }];
+        let students = [];
+        let attendance = {};
+        let marks = {};
+
+        function login() {
+            const userID = document.getElementById('userID').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('userType').value;
+
+            if (userType === 'admin' && userID === 'admin' && password === 'admin123') {
+                showAdminDashboard();
+            } else if (userType === 'teacher') {
+                const teacher = teachers.find(t => t.id === userID && t.password === password);
+                if (teacher) {
+                    showTeacherDashboard();
+                } else {
+                    alert('Invalid credentials!');
+                }
+            } else if (userType === 'student') {
+                const student = students.find(s => s.rollNo === userID && s.password === password);
+                if (student) {
+                    showStudentDashboard(student);
+                } else {
+                    alert('Invalid credentials!');
+                }
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            document.getElementById('teacherDashboard').classList.add('hidden');
+            document.getElementById('studentDashboard').classList.add('hidden');
+        }
+
+        function showTeacherDashboard() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('teacherDashboard').classList.remove('hidden');
+            document.getElementById('studentDashboard').classList.add('hidden');
+            displayAttendanceList();
+        }
+
+        function showStudentDashboard(student) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('teacherDashboard').classList.add('hidden');
+            document.getElementById('studentDashboard').classList.remove('hidden');
+            displayStudentInfo(student);
+        }
+
+        function addTeacher() {
+            const name = document.getElementById('teacherName').value;
+            const age = document.getElementById('teacherAge').value;
+            const gender = document.getElementById('teacherGender').value;
+            const subject = document.getElementById('teacherSubject').value;
+            const id = document.getElementById('teacherID').value;
+            const password = document.getElementById('teacherPassword').value;
+
+            if (name && age && gender && subject && id && password) {
+                teachers.push({ name, age, gender, subject, id, password, type: 'teacher' });
+                alert('Teacher added successfully!');
+                clearTeacherForm();
+            } else {
+                alert('Please fill all fields!');
+            }
+        }
+
+        function addStudent() {
+            const name = document.getElementById('studentName').value;
+            const rollNo = document.getElementById('rollNo').value;
+            const className = document.getElementById('class').value;
+            const branch = document.getElementById('branch').value;
+            const password = document.getElementById('studentPassword').value;
+
+            if (name && rollNo && className && branch && password) {
+                students.push({ name, rollNo, class: className, branch, password });
+                attendance[rollNo] = [];
+                marks[rollNo] = { midterm: [], semester: [] };
+                alert('Student added successfully!');
+                clearStudentForm();
+            } else {
+                alert('Please fill all fields!');
+            }
+        }
+
+        function showTeacherList() {
+            const container = document.getElementById('listContainer');
+            let html = `
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-2">Name</th>
+                            <th class="p-2">Age</th>
+                            <th class="p-2">Gender</th>
+                            <th class="p-2">Subject</th>
+                            <th class="p-2">ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            teachers.forEach(teacher => {
+                if (teacher.type === 'teacher') {
+                    html += `
+                        <tr class="border-t">
+                            <td class="p-2">${teacher.name}</td>
+                            <td class="p-2">${teacher.age}</td>
+                            <td class="p-2">${teacher.gender}</td>
+                            <td class="p-2">${teacher.subject}</td>
+                            <td class="p-2">${teacher.id}</td>
+                        </tr>
+                    `;
+                }
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function showStudentList() {
+            const container = document.getElementById('listContainer');
+            let html = `
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-2">Name</th>
+                            <th class="p-2">Roll No</th>
+                            <th class="p-2">Class</th>
+                            <th class="p-2">Branch</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            students.forEach(student => {
+                html += `
+                    <tr class="border-t">
+                        <td class="p-2">${student.name}</td>
+                        <td class="p-2">${student.rollNo}</td>
+                        <td class="p-2">${student.class}</td>
+                        <td class="p-2">${student.branch}</td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function displayAttendanceList() {
+            const container = document.getElementById('attendanceList');
+            const today = new Date().toISOString().split('T')[0];
+            let html = `
+                <form id="attendanceForm">
+                    <div class="mb-4">
+                        <label class="block mb-2">Date: ${today}</label>
+                    </div>
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="p-2">Roll No</th>
+                                <th class="p-2">Name</th>
+                                <th class="p-2">Present</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            students.forEach(student => {
+                html += `
+                    <tr class="border-t">
+                        <td class="p-2">${student.rollNo}</td>
+                        <td class="p-2">${student.name}</td>
+                        <td class="p-2">
+                            <input type="checkbox" name="attendance_${student.rollNo}" class="form-checkbox">
+                        </td>
+                    </tr>
+                `;
+            });
+            html += `
+                    </tbody>
+                </table>
+                <button type="button" onclick="submitAttendance()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Submit Attendance
+                </button>
+            </form>`;
+            container.innerHTML = html;
+        }
+
+        function submitAttendance() {
+            const today = new Date().toISOString().split('T')[0];
+            students.forEach(student => {
+                const isPresent = document.querySelector(`input[name="attendance_${student.rollNo}"]`).checked;
+                if (!attendance[student.rollNo]) {
+                    attendance[student.rollNo] = [];
+                }
+                attendance[student.rollNo].push({ date: today, present: isPresent });
+            });
+            alert('Attendance marked successfully!');
+        }
+
+        function updateMarks() {
+            const rollNo = document.getElementById('studentRoll').value;
+            const examType = document.getElementById('examType').value;
+            const marksValue = document.getElementById('marks').value;
+
+            if (rollNo && examType && marksValue) {
+                if (!marks[rollNo]) {
+                    marks[rollNo] = { midterm: [], semester: [] };
+                }
+                marks[rollNo][examType].push(parseInt(marksValue));
+                alert('Marks updated successfully!');
+                document.getElementById('studentRoll').value = '';
+                document.getElementById('marks').value = '';
+            } else {
+                alert('Please fill all fields!');
+            }
+        }
+
+        function displayStudentInfo(student) {
+            // Personal Info
+            document.getElementById('studentInfo').innerHTML = `
+                <p><strong>Name:</strong> ${student.name}</p>
+                <p><strong>Roll No:</strong> ${student.rollNo}</p>
+                <p><strong>Class:</strong> ${student.class}</p>
+                <p><strong>Branch:</strong> ${student.branch}</p>
+            `;
+
+            // Attendance Report
+            const studentAttendance = attendance[student.rollNo] || [];
+            const totalDays = studentAttendance.length;
+            const presentDays = studentAttendance.filter(a => a.present).length;
+            const attendancePercentage = totalDays ? ((presentDays / totalDays) * 100).toFixed(2) : 0;
+
+            document.getElementById('attendanceReport').innerHTML = `
+                <p><strong>Total Days:</strong> ${totalDays}</p>
+                <p><strong>Present Days:</strong> ${presentDays}</p>
+                <p><strong>Attendance Percentage:</strong> ${attendancePercentage}%</p>
+            `;
+
+            // Performance Report
+            const studentMarks = marks[student.rollNo] || { midterm: [], semester: [] };
+            const midtermAvg = studentMarks.midterm.length ? 
+                (studentMarks.midterm.reduce((a, b) => a + b, 0) / studentMarks.midterm.length).toFixed(2) : 'N/A';
+            const semesterAvg = studentMarks.semester.length ?
+                (studentMarks.semester.reduce((a, b) => a + b, 0) / studentMarks.semester.length).toFixed(2) : 'N/A';
+
+            document.getElementById('performanceReport').innerHTML = `
+                <p><strong>Mid Term Average:</strong> ${midtermAvg}</p>
+                <p><strong>Semester Average:</strong> ${semesterAvg}</p>
+            `;
+        }
+
+        function logout() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('teacherDashboard').classList.add('hidden');
+            document.getElementById('studentDashboard').classList.add('hidden');
+            document.getElementById('userID').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function clearTeacherForm() {
+            document.getElementById('teacherName').value = '';
+            document.getElementById('teacherAge').value = '';
+            document.getElementById('teacherGender').value = '';
+            document.getElementById('teacherSubject').value = '';
+            document.getElementById('teacherID').value = '';
+            document.getElementById('teacherPassword').value = '';
+        }
+
+        function clearStudentForm() {
+            document.getElementById('studentName').value = '';
+            document.getElementById('rollNo').value = '';
+            document.getElementById('class').value = '';
+            document.getElementById('branch').value = '';
+            document.getElementById('studentPassword').value = '';
+        }
+    </script>
+</body>
+</html>
